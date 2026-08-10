@@ -118,7 +118,7 @@ const PROJECTS = [
 ];
 
 const SOCIALS = [
-  { label: "Email", href: "roccolavecchia.rl@gmail.com", icon: Mail },
+  { label: "Email", href: "mailto:roccolavecchia.rl@gmail.com", icon: Mail },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/rocco-lavecchia-58089917a/",
