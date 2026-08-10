@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import {
   ArrowRight,
@@ -13,6 +13,7 @@ import {
   Send,
   CheckCircle2,
   Menu,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import heroAurora from "@/assets/hero-aurora.jpg";
+import turnoGo from "@/assets/turnoGo.png";
 
 // ── Endpoint de Formspree — configurado por variable de entorno ──
 // Creá un formulario en https://formspree.io y definí VITE_FORMSPREE_ENDPOINT
@@ -69,14 +71,24 @@ const SKILLS = [
   { name: "Vercel", group: "Herramientas" },
 ];
 
-const PROJECTS = [
+interface Project {
+  name: string;
+  description: string;
+  stack: string[];
+  tag: string;
+  href: string;
+  featured?: boolean;
+  slug?: string;
+  github?: { frontend: string; backend: string };
+}
+
+const PROJECTS: Project[] = [
   {
     name: "Sitio Web Restaurante — Lavecchia's",
     description:
       "Sitio estático desarrollado con HTML y CSS, orientado a la presentación de un restaurante. Diseño visual atractivo, navegación clara y secciones bien definidas para mejorar la experiencia del usuario.",
     stack: ["HTML", "CSS"],
     tag: "Static",
-    featured: true,
     href: "https://pagina-lab3-lavecchiaroccos-projects.vercel.app/",
   },
   {
@@ -109,6 +121,8 @@ const PROJECTS = [
       "SaaS full stack para la gestión y reserva de turnos. Permite a los negocios administrar servicios, horarios y disponibilidad, mientras los usuarios pueden registrarse, consultar turnos y realizar reservas online. Incluye autenticación, validaciones de disponibilidad, API REST y persistencia de datos.",
     stack: ["React", "TypeScript", "FastAPI", "Python", "PostgreSQL", "SQLAlchemy", "Tailwind CSS"],
     tag: "Full Stack",
+    featured: true,
+    slug: "turnogo",
     href: "https://www.turnogo.app/",
     github: {
       frontend: "https://github.com/wyn-code/TurnoGo",
@@ -400,45 +414,116 @@ function About() {
 
 /* ───────────────────────── Projects (Bento) ───────────────────────── */
 function Projects() {
+  const featured = PROJECTS.filter((p) => p.featured);
+  const others = PROJECTS.filter((p) => !p.featured);
+
   return (
     <section id="proyectos" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
       <SectionHeading kicker="02" title="Proyectos" />
-      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-6">
-        {PROJECTS.map((p) => (
-          <article
-            key={p.name}
-            className={`bento-cell bento-cell-hover group flex flex-col p-6 ${
-              p.featured ? "md:col-span-3" : "md:col-span-3"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary">
-                {p.tag}
-              </span>
-              <ArrowUpRight className="h-5 w-5 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" />
-            </div>
-            <h3 className="mt-5 font-display text-xl font-semibold leading-snug">{p.name}</h3>
-            <p className="mt-3 flex-1 text-pretty text-sm leading-relaxed text-muted-foreground">
-              {p.description}
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {p.stack.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-lg border border-border bg-elevated/40 px-2.5 py-1 font-mono text-[11px] text-muted-foreground"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-            <a
-              href={p.href}
-              className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-opacity hover:opacity-80"
+
+      {featured.length > 0 && (
+        <div className="mt-8">
+          <SubHeading kicker="★" title="Destacados" />
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-6">
+            {featured.map((p) => (
+              <article
+                key={p.name}
+                className="bento-cell bento-cell-hover group relative flex flex-col gap-6 overflow-hidden p-6 sm:p-8 md:col-span-6 lg:flex-row lg:items-center"
+              >
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-primary/15 to-transparent" />
+                <div className="flex flex-1 flex-col">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+                      <Star className="h-3.5 w-3.5 fill-current" /> Destacado
+                    </span>
+                    <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary">
+                      {p.tag}
+                    </span>
+                  </div>
+                  <h3 className="mt-5 font-display text-2xl font-semibold leading-snug sm:text-3xl">
+                    {p.name}
+                  </h3>
+                  <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
+                    {p.description}
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {p.stack.map((t) => (
+                      <span
+                        key={t}
+                        className="rounded-lg border border-border bg-elevated/40 px-2.5 py-1 font-mono text-[11px] text-muted-foreground"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-6 flex flex-wrap items-center gap-3">
+                    <Link
+                      to="/proyectos/$slug"
+                      params={{ slug: p.slug! }}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                      Ver caso de estudio <ArrowRight className="h-4 w-4" />
+                    </Link>
+                    <a
+                      href={p.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-elevated/30 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-primary/50 hover:text-primary"
+                    >
+                      Sitio web <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                </div>
+                <div className="relative overflow-hidden rounded-xl border border-border bg-elevated/30 lg:w-[42%] lg:shrink-0">
+                  <img
+                    src={turnoGo}
+                    alt={`Captura de la aplicación ${p.name}`}
+                    className="h-52 w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] sm:h-60 lg:h-64"
+                  />
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-10">
+        <SubHeading kicker="—" title="Todos los proyectos" />
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-6">
+          {others.map((p) => (
+            <article
+              key={p.name}
+              className="bento-cell bento-cell-hover group flex flex-col p-6 md:col-span-3"
             >
-              Ver proyecto <ArrowRight className="h-3.5 w-3.5" />
-            </a>
-          </article>
-        ))}
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary">
+                  {p.tag}
+                </span>
+                <ArrowUpRight className="h-5 w-5 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" />
+              </div>
+              <h3 className="mt-5 font-display text-xl font-semibold leading-snug">{p.name}</h3>
+              <p className="mt-3 flex-1 text-pretty text-sm leading-relaxed text-muted-foreground">
+                {p.description}
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {p.stack.map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-lg border border-border bg-elevated/40 px-2.5 py-1 font-mono text-[11px] text-muted-foreground"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <a
+                href={p.href}
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-opacity hover:opacity-80"
+              >
+                Ver proyecto <ArrowRight className="h-3.5 w-3.5" />
+              </a>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -629,6 +714,16 @@ function SectionHeading({ kicker, title }: { kicker: string; title: string }) {
     <div className="flex items-baseline gap-4">
       <span className="font-mono text-sm text-primary">{kicker}</span>
       <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
+      <span className="ml-1 h-px flex-1 bg-border" />
+    </div>
+  );
+}
+
+function SubHeading({ kicker, title }: { kicker: string; title: string }) {
+  return (
+    <div className="flex items-baseline gap-3">
+      <span className="font-mono text-xs text-primary">{kicker}</span>
+      <h3 className="font-display text-xl font-semibold tracking-tight">{title}</h3>
       <span className="ml-1 h-px flex-1 bg-border" />
     </div>
   );
