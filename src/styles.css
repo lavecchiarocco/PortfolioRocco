@@ -1,0 +1,160 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system — Midnight Indigo
+ * Bento portfolio for Rocco Lavecchia.
+ * Headings: Space Grotesk · Body: DM Sans
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-elevated: var(--elevated);
+  --color-indigo: var(--indigo);
+  --color-indigo-foreground: var(--indigo-foreground);
+  --color-indigo-glow: var(--indigo-glow);
+}
+
+:root {
+  --radius: 1rem;
+
+  /* Midnight Indigo base */
+  --background: oklch(0.14 0.03 273);
+  --foreground: oklch(0.96 0.01 250);
+
+  --card: oklch(0.18 0.04 275);
+  --card-foreground: oklch(0.96 0.01 250);
+  --popover: oklch(0.18 0.04 275);
+  --popover-foreground: oklch(0.96 0.01 250);
+
+  --primary: oklch(0.5 0.21 277);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.24 0.07 276);
+  --secondary-foreground: oklch(0.96 0.01 250);
+  --muted: oklch(0.23 0.06 275);
+  --muted-foreground: oklch(0.72 0.04 270);
+  --accent: oklch(0.5 0.21 277);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.65 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.5 0.21 277);
+
+  /* Custom bento surfaces */
+  --surface: oklch(0.18 0.04 275);
+  --surface-foreground: oklch(0.96 0.01 250);
+  --elevated: oklch(0.24 0.08 276);
+  --indigo: oklch(0.5 0.21 277);
+  --indigo-foreground: oklch(0.99 0 0);
+  --indigo-glow: oklch(0.55 0.24 278);
+
+  --gradient-indigo: linear-gradient(135deg, oklch(0.5 0.21 277), oklch(0.4 0.17 290));
+  --shadow-glow:
+    0 0 0 1px color-mix(in oklab, var(--indigo) 25%, transparent),
+    0 18px 50px -12px color-mix(in oklab, var(--indigo) 45%, transparent);
+  --shadow-bento:
+    0 1px 0 0 color-mix(in oklab, white 6%, transparent) inset,
+    0 24px 60px -28px oklch(0.04 0.02 275);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--indigo) 40%, transparent);
+    color: white;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility bento-cell {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-2xl);
+  border: 1px solid color-mix(in oklab, white 8%, transparent);
+  background: var(--surface);
+  box-shadow: var(--shadow-bento);
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+@utility bento-cell-hover {
+  &:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in oklab, var(--indigo) 45%, transparent);
+    box-shadow:
+      0 1px 0 0 color-mix(in oklab, white 10%, transparent) inset,
+      0 30px 70px -30px color-mix(in oklab, var(--indigo) 55%, transparent);
+  }
+}
+
+@utility text-gradient {
+  background: var(--gradient-indigo);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility grid-glow {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--indigo) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--indigo) 8%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
