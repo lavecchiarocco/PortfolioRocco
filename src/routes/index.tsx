@@ -28,9 +28,10 @@ import {
 } from "@/components/ui/select";
 import heroAurora from "@/assets/hero-aurora.jpg";
 
-// ── Reemplazá con tu propio endpoint de Formspree (https://formspree.io) ──
-// Creá un formulario nuevo, copiá el ID y pegalo acá: https://formspree.io/f/<ID>
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/your-form-id";
+// ── Endpoint de Formspree — configurado por variable de entorno ──
+// Creá un formulario en https://formspree.io y definí VITE_FORMSPREE_ENDPOINT
+// en tu archivo .env (ver .env.example). Ej: https://formspree.io/f/<ID>
+const FORMSPREE_ENDPOINT = import.meta.env["VITE_FORMSPREE_ENDPOINT"] as string | undefined;
 
 const NAV = [
   { label: "Sobre Mí", href: "#sobre-mi" },
@@ -47,13 +48,25 @@ const SKILLS = [
   { name: "HTML", group: "Frontend" },
   { name: "CSS", group: "Frontend" },
   { name: "Tailwind", group: "Frontend" },
+  { name: "React Query", group: "Frontend" },
+  { name: "Vite", group: "Frontend" },
+
   { name: ".NET", group: "Backend" },
   { name: "C#", group: "Backend" },
   { name: "SQL", group: "Backend" },
   { name: "Python", group: "Backend" },
+  { name: "FastAPI", group: "Backend" },
+  { name: "SQLAlchemy", group: "Backend" },
+  { name: "Node.js", group: "Backend" },
+
+  { name: "PostgreSQL", group: "Base de Datos" },
+  { name: "Supabase", group: "Base de Datos" },
+
   { name: "Pandas", group: "Datos" },
   { name: "Power BI", group: "Datos" },
+
   { name: "Git", group: "Herramientas" },
+  { name: "Vercel", group: "Herramientas" },
 ];
 
 const PROJECTS = [
@@ -64,7 +77,7 @@ const PROJECTS = [
     stack: ["HTML", "CSS"],
     tag: "Static",
     featured: true,
-    href: "#",
+    href: "https://pagina-lab3-lavecchiaroccos-projects.vercel.app/",
   },
   {
     name: "Epotifai",
@@ -72,7 +85,7 @@ const PROJECTS = [
       "App en React para agregar, buscar y reproducir canciones de YouTube. El usuario carga canciones por URL, las visualiza en una lista personalizada y lleva un conteo de reproducciones por tema.",
     stack: ["React", "JavaScript"],
     tag: "Web App",
-    href: "#",
+    href: "https://react-project-seven-tan.vercel.app/",
   },
   {
     name: "To-do List Kanban",
@@ -80,7 +93,7 @@ const PROJECTS = [
       "Interfaz web con HTML y CSS enfocada en el diseño y la organización de tareas. Tablero tipo Kanban con tareas distribuidas por estados y prioridades, sin lógica JavaScript.",
     stack: ["HTML", "CSS"],
     tag: "UI",
-    href: "#",
+    href: "https://segundo-parcial-lab3-qr1s.vercel.app/",
   },
   {
     name: "Giff App Angular",
@@ -88,14 +101,30 @@ const PROJECTS = [
       "SPA en Angular para buscar, visualizar y gestionar GIFs desde la API de Giphy. Navegación entre Trending, Búsqueda e Historial sin recargar la página.",
     stack: ["Angular", "TypeScript"],
     tag: "SPA",
-    href: "#",
+    href: "https://giff-app-angular.vercel.app/dashboard/trending",
+  },
+  {
+    name: "TurnoGo",
+    description:
+      "SaaS full stack para la gestión y reserva de turnos. Permite a los negocios administrar servicios, horarios y disponibilidad, mientras los usuarios pueden registrarse, consultar turnos y realizar reservas online. Incluye autenticación, validaciones de disponibilidad, API REST y persistencia de datos.",
+    stack: ["React", "TypeScript", "FastAPI", "Python", "PostgreSQL", "SQLAlchemy", "Tailwind CSS"],
+    tag: "Full Stack",
+    href: "https://www.turnogo.app/",
+    github: {
+      frontend: "https://github.com/wyn-code/TurnoGo",
+      backend: "https://github.com/wyn-code/TurnoGo_back",
+    },
   },
 ];
 
 const SOCIALS = [
-  { label: "Email", href: "mailto:rocco@example.com", icon: Mail },
-  { label: "LinkedIn", href: "https://linkedin.com/in/roccolavecchia", icon: Linkedin },
-  { label: "GitHub", href: "https://github.com/roccolavecchia", icon: Github },
+  { label: "Email", href: "roccolavecchia.rl@gmail.com", icon: Mail },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/rocco-lavecchia-58089917a/",
+    icon: Linkedin,
+  },
+  { label: "GitHub", href: "https://github.com/lavecchiarocco", icon: Github },
 ];
 
 const BUDGETS = ["$300.000", "$400.000 - $600.000", "$700.000 - $850.000", "Más de $1.000.000"];
@@ -302,24 +331,43 @@ function About() {
         {/* Bio */}
         <div className="bento-cell bento-cell-hover md:col-span-3 p-7">
           <h3 className="font-display text-xl font-semibold">Rocco Lavecchia</h3>
-          <p className="mt-1 text-sm text-primary">Estudiante de Tecnicatura en Programación</p>
+
+          <p className="mt-1 text-sm text-primary">
+            Desarrollador Full Stack · Estudiante de Tecnicatura en Programación
+          </p>
+
           <p className="mt-4 text-pretty text-sm leading-relaxed text-muted-foreground">
-            Soy estudiante avanzado de la Tecnicatura Universitaria en Programación (UTN). Me
-            apasiona construir aplicaciones web completas: desde la lógica del backend y el modelado
-            de datos hasta una interfaz pulida y accesible.
+            Soy estudiante avanzado de la Tecnicatura Universitaria en Programación (UTN) y
+            desarrollador Full Stack en formación. Me apasiona crear aplicaciones web completas,
+            trabajando desde la lógica del backend y el modelado de datos hasta interfaces modernas,
+            accesibles y fáciles de usar.
           </p>
+
           <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
-            Trabajo con el ecosistema .NET y bases SQL en el backend, y con Angular, React y
-            TypeScript en el frontend. También incursiono en análisis de datos con Python, Pandas y
-            Power BI.
+            Tengo experiencia desarrollando proyectos reales con React, Angular, TypeScript,
+            FastAPI, .NET, SQL y PostgreSQL. Actualmente busco mi primera oportunidad profesional en
+            el área de desarrollo, donde pueda aportar mis conocimientos, seguir aprendiendo y
+            crecer trabajando en equipo.
           </p>
+
+          <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
+            Uno de mis principales proyectos es TurnoGo, un SaaS de gestión y reserva de turnos
+            desarrollado y desplegado como una aplicación Full Stack.
+          </p>
+
           <div className="mt-6 flex flex-wrap gap-2">
             <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
               Full Stack
             </span>
+
             <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
               Frontend
             </span>
+
+            <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+              Backend
+            </span>
+
             <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
               Data
             </span>
@@ -408,10 +456,13 @@ function Contact() {
     const data = new FormData(form);
     data.append("budget", budget);
 
-    if (FORMSPREE_ENDPOINT.includes("your-form-id")) {
-      toast.error(
-        "Falta configurar el endpoint de Formspree. Reemplazá FORMSPREE_ENDPOINT en el código.",
-      );
+    const name = String(data.get("name") ?? "");
+    const email = String(data.get("email") ?? "");
+    data.set("_subject", name ? `Contacto portfolio — ${name}` : "Contacto portfolio");
+    if (email) data.set("_replyto", email);
+
+    if (!FORMSPREE_ENDPOINT || FORMSPREE_ENDPOINT.includes("your-form-id")) {
+      toast.error("Falta configurar VITE_FORMSPREE_ENDPOINT en el archivo .env.");
       return;
     }
 
