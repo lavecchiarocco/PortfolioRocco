@@ -2,9 +2,13 @@ import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { ArrowLeft, ArrowUpRight, ExternalLink, Github, Globe } from "lucide-react";
 import { PROJECT_DETAILS, type ProjectSection } from "@/lib/project-details";
 import turnoGo from "@/assets/turnoGo.png";
+import totalImport1 from "@/assets/totalimport1.png";
+import totalImport2 from "@/assets/totalimport2.png";
 
 const PROJECT_IMAGES: Record<string, string> = {
   turnogo: turnoGo,
+  totalimport1: totalImport1,
+  totalimport2: totalImport2,
 };
 
 export const Route = createFileRoute("/proyectos/$slug")({
@@ -103,7 +107,7 @@ function ProjectDetailPage() {
         )}
 
         <div className="mt-10 flex flex-col gap-6">
-          {project.sections.map((section) => (
+          {project.sections.map((section: ProjectSection) => (
             <SectionBlock key={section.title} section={section} />
           ))}
         </div>

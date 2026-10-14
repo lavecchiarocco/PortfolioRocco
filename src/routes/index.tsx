@@ -29,6 +29,12 @@ import {
 } from "@/components/ui/select";
 import heroAurora from "@/assets/hero-aurora.jpg";
 import turnoGo from "@/assets/turnoGo.png";
+import totalImport1 from "@/assets/totalimport1.png";
+
+const FEATURED_IMAGES: Record<string, string> = {
+  turnogo: turnoGo,
+  totalimport: totalImport1,
+};
 
 // ── Endpoint de Formspree — configurado por variable de entorno ──
 // Creá un formulario en https://formspree.io y definí VITE_FORMSPREE_ENDPOINT
@@ -83,6 +89,30 @@ interface Project {
 }
 
 const PROJECTS: Project[] = [
+  {
+    name: "TotalImport — Calculadora de Impuestos",
+    description:
+      "Nació de un problema real: quería calcular cuánto me saldría traer un paquete a Argentina y ninguna calculadora daba números claros. Compara en paralelo los 3 regímenes aduaneros (Courier personal, Courier comercial DIS y Régimen General) y muestra costo total, desglose de tributos, % sobre CIF, conversión USD/ARS, modo Conservador/Mínimo y sensibilidad al dólar. Incluye exportación a PDF.",
+    stack: [
+      "React",
+      "TypeScript",
+      "FastAPI",
+      "Python",
+      "Tailwind CSS",
+      "React Query",
+      "Zod",
+      "Recharts",
+      "jsPDF",
+    ],
+    tag: "Full Stack",
+    featured: true,
+    slug: "totalimport",
+    href: "https://calculadora-impuestos.vercel.app/",
+    github: {
+      frontend: "https://github.com/lavecchiarocco/Calculadora-Impuestos/tree/main/frontend",
+      backend: "https://github.com/lavecchiarocco/Calculadora-Impuestos/tree/main/backend",
+    },
+  },
   {
     name: "Sitio Web Restaurante — Lavecchia's",
     description:
@@ -476,7 +506,7 @@ function Projects() {
                 </div>
                 <div className="relative overflow-hidden rounded-xl border border-border bg-elevated/30 lg:w-[42%] lg:shrink-0">
                   <img
-                    src={turnoGo}
+                    src={FEATURED_IMAGES[p.slug!] ?? turnoGo}
                     alt={`Captura de la aplicación ${p.name}`}
                     className="h-52 w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] sm:h-60 lg:h-64"
                   />
