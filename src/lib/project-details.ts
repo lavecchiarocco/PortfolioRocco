@@ -195,4 +195,37 @@ export const PROJECT_DETAILS: Record<string, ProjectDetail> = {
       },
     ],
   },
+  jfr: {
+    slug: "jfr",
+    name: "JFR Tecno",
+    tag: "Frontend + CMS",
+    summary:
+      "Catálogo de monitores portátiles con Sanity como CMS headless: productos y precios se actualizan sin tocar código. Incluye fichas de producto, checkout por WhatsApp, envíos a todo el país y deploy en Vercel.",
+    image: "jfr",
+    stack: ["Sanity", "Vercel", "WhatsApp"],
+    links: [{ label: "Sitio web", href: "https://catalogo-jfrtecno.vercel.app/" }],
+    sections: [
+      {
+        title: "Qué resuelve",
+        intro:
+          "El catálogo de monitores portátiles se mantenía a mano y no tenía un camino claro de compra. Ahora el contenido se edita desde Sanity y cada producto tiene una ficha con salida directa a WhatsApp.",
+        bullets: [
+          "Productos y precios administrados desde el CMS",
+          "Fichas de producto con checkout por WhatsApp",
+          "Envíos a todo el país",
+        ],
+      },
+      {
+        title: "Arquitectura",
+        intro:
+          "Sanity funciona como CMS headless: separa el contenido de la interfaz. El sitio se despliega en Vercel y el canal de venta es WhatsApp.",
+        bullets: ["Sanity (CMS headless)", "Vercel (deploy)", "WhatsApp (checkout)"],
+      },
+      {
+        title: "Aprendizaje",
+        intro:
+          "Separar el contenido de la interfaz desde el primer día permitió que el catálogo se actualice sin depender de un deploy.",
+      },
+    ],
+  },
 };

@@ -1,45 +1,16 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Mail,
-  Linkedin,
-  Github,
-  Sparkles,
-  GraduationCap,
-  MapPin,
-  Code2,
-  Send,
-  CheckCircle2,
-  Menu,
-  Star,
-} from "lucide-react";
-import { toast } from "sonner";
+import { useState } from "react";
+import { ArrowRight, ArrowUpRight, Mail, Linkedin, Github, Menu, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import heroAurora from "@/assets/hero-aurora.jpg";
 import turnoGo from "@/assets/turnoGo.png";
 import totalImport1 from "@/assets/totalimport1.png";
+import jfrTecno from "@/assets/jfr.jpeg";
 
 const FEATURED_IMAGES: Record<string, string> = {
   turnogo: turnoGo,
   totalimport: totalImport1,
+  jfr: jfrTecno,
 };
-
-// ── Endpoint de Formspree — configurado por variable de entorno ──
-// Creá un formulario en https://formspree.io y definí VITE_FORMSPREE_ENDPOINT
-// en tu archivo .env (ver .env.example). Ej: https://formspree.io/f/<ID>
-const FORMSPREE_ENDPOINT = import.meta.env["VITE_FORMSPREE_ENDPOINT"] as string | undefined;
 
 const NAV = [
   { label: "Sobre Mí", href: "#sobre-mi" },
@@ -48,34 +19,58 @@ const NAV = [
   { label: "Contacto", href: "#contacto" },
 ];
 
-const SKILLS = [
-  { name: "Angular", group: "Frontend" },
-  { name: "React", group: "Frontend" },
-  { name: "TypeScript", group: "Frontend" },
-  { name: "JavaScript", group: "Frontend" },
-  { name: "HTML", group: "Frontend" },
-  { name: "CSS", group: "Frontend" },
-  { name: "Tailwind", group: "Frontend" },
-  { name: "React Query", group: "Frontend" },
-  { name: "Vite", group: "Frontend" },
+type TechItem = { name: string; projects?: string[]; note?: string };
+type StackGroup = {
+  label: string;
+  description?: string;
+  footnote?: string;
+  items: TechItem[];
+};
 
-  { name: ".NET", group: "Backend" },
-  { name: "C#", group: "Backend" },
-  { name: "SQL", group: "Backend" },
-  { name: "Python", group: "Backend" },
-  { name: "FastAPI", group: "Backend" },
-  { name: "SQLAlchemy", group: "Backend" },
-  { name: "Node.js", group: "Backend" },
+const BACKEND_STACK: StackGroup = {
+  label: "Backend",
+  items: [
+    { name: "Python", projects: ["TurnoGo", "TotalImport"] },
+    { name: "FastAPI", projects: ["TurnoGo", "TotalImport"] },
+    { name: "SQLAlchemy", projects: ["TurnoGo", "TotalImport"] },
+    { name: "Pydantic", projects: ["TurnoGo", "TotalImport"] },
+    { name: "Alembic", projects: ["TotalImport"] },
+  ],
+};
 
-  { name: "PostgreSQL", group: "Base de Datos" },
-  { name: "Supabase", group: "Base de Datos" },
+const DATA_STACK: StackGroup = {
+  label: "Datos",
+  description: "Integridad y consultas",
+  footnote: "Constraint GiST para evitar turnos solapados en TurnoGo",
+  items: [
+    { name: "PostgreSQL", note: "constraint GiST", projects: ["TurnoGo"] },
+    { name: "SQL", projects: ["TurnoGo"] },
+  ],
+};
 
-  { name: "Pandas", group: "Datos" },
-  { name: "Power BI", group: "Datos" },
+const FRONTEND_STACK: StackGroup = {
+  label: "Frontend",
+  description: "La interfaz que consume la API",
+  items: [
+    { name: "React", projects: ["TurnoGo", "TotalImport", "Epotifai"] },
+    { name: "TypeScript", projects: ["TurnoGo", "TotalImport"] },
+    { name: "Tailwind", projects: ["TurnoGo", "TotalImport"] },
+    { name: "TanStack Query", projects: ["TotalImport"] },
+    { name: "Vite", projects: ["TurnoGo", "TotalImport"] },
+  ],
+};
 
-  { name: "Git", group: "Herramientas" },
-  { name: "Vercel", group: "Herramientas" },
-];
+const TOOLS_STACK: StackGroup = {
+  label: "Herramientas",
+  items: [
+    { name: "Git" },
+    { name: "Vercel", projects: ["JFR Tecno", "iTecnología"] },
+    { name: "Sanity", projects: ["JFR Tecno"] },
+  ],
+};
+
+const CORE_STACK = [BACKEND_STACK, DATA_STACK, FRONTEND_STACK, TOOLS_STACK] as const;
+const ALSO_USED = ["HTML", "CSS", "JavaScript"];
 
 interface Project {
   name: string;
@@ -90,21 +85,35 @@ interface Project {
 
 const PROJECTS: Project[] = [
   {
+    name: "TurnoGo",
+    description:
+      "SaaS de reserva de turnos: dos clientes no pueden tomar el mismo horario. API en FastAPI con PostgreSQL, autenticación con OTP, webhooks firmados de Mercado Pago y cliente React + TypeScript. Una constraint GiST en la base garantiza la integridad y 122 tests cubren el flujo de reserva.",
+    stack: ["Python", "FastAPI", "PostgreSQL", "SQLAlchemy", "React", "TypeScript", "Tailwind CSS"],
+    tag: "Backend + Frontend",
+    featured: true,
+    slug: "turnogo",
+    href: "https://www.turnogo.app/",
+    github: {
+      frontend: "https://github.com/wyn-code/TurnoGo",
+      backend: "https://github.com/wyn-code/TurnoGo_back",
+    },
+  },
+  {
     name: "TotalImport — Calculadora de Impuestos",
     description:
-      "Nació de un problema real: quería calcular cuánto me saldría traer un paquete a Argentina y ninguna calculadora daba números claros. Compara en paralelo los 3 regímenes aduaneros (Courier personal, Courier comercial DIS y Régimen General) y muestra costo total, desglose de tributos, % sobre CIF, conversión USD/ARS, modo Conservador/Mínimo y sensibilidad al dólar. Incluye exportación a PDF.",
+      "Compara en paralelo los 3 regímenes aduaneros para importar a Argentina. Motor de cálculo puro, alícuotas como YAML editables sin redeploy, dólar del BCRA con fallback y comparativa exportable a PDF.",
     stack: [
       "React",
       "TypeScript",
       "FastAPI",
       "Python",
       "Tailwind CSS",
-      "React Query",
+      "TanStack Query",
       "Zod",
       "Recharts",
       "jsPDF",
     ],
-    tag: "Full Stack",
+    tag: "Backend + Frontend",
     featured: true,
     slug: "totalimport",
     href: "https://calculadora-impuestos.vercel.app/",
@@ -114,12 +123,14 @@ const PROJECTS: Project[] = [
     },
   },
   {
-    name: "Sitio Web Restaurante — Lavecchia's",
+    name: "JFR Tecno",
     description:
-      "Sitio estático desarrollado con HTML y CSS, orientado a la presentación de un restaurante. Diseño visual atractivo, navegación clara y secciones bien definidas para mejorar la experiencia del usuario.",
-    stack: ["HTML", "CSS"],
-    tag: "Static",
-    href: "https://pagina-lab3-lavecchiaroccos-projects.vercel.app/",
+      "Catálogo de monitores portátiles con Sanity como CMS headless: productos y precios se actualizan sin tocar código. Fichas de producto, checkout por WhatsApp, envíos a todo el país y deploy en Vercel.",
+    stack: ["Sanity", "Vercel", "WhatsApp"],
+    tag: "Frontend + CMS",
+    featured: true,
+    slug: "jfr",
+    href: "https://catalogo-jfrtecno.vercel.app/",
   },
   {
     name: "Epotifai",
@@ -130,34 +141,12 @@ const PROJECTS: Project[] = [
     href: "https://react-project-seven-tan.vercel.app/",
   },
   {
-    name: "To-do List Kanban",
+    name: "iTecnología",
     description:
-      "Interfaz web con HTML y CSS enfocada en el diseño y la organización de tareas. Tablero tipo Kanban con tareas distribuidas por estados y prioridades, sin lógica JavaScript.",
-    stack: ["HTML", "CSS"],
-    tag: "UI",
-    href: "https://segundo-parcial-lab3-qr1s.vercel.app/",
-  },
-  {
-    name: "Giff App Angular",
-    description:
-      "SPA en Angular para buscar, visualizar y gestionar GIFs desde la API de Giphy. Navegación entre Trending, Búsqueda e Historial sin recargar la página.",
-    stack: ["Angular", "TypeScript"],
-    tag: "SPA",
-    href: "https://giff-app-angular.vercel.app/dashboard/trending",
-  },
-  {
-    name: "TurnoGo",
-    description:
-      "SaaS full stack para la gestión y reserva de turnos. Permite a los negocios administrar servicios, horarios y disponibilidad, mientras los usuarios pueden registrarse, consultar turnos y realizar reservas online. Incluye autenticación, validaciones de disponibilidad, API REST y persistencia de datos.",
-    stack: ["React", "TypeScript", "FastAPI", "Python", "PostgreSQL", "SQLAlchemy", "Tailwind CSS"],
-    tag: "Full Stack",
-    featured: true,
-    slug: "turnogo",
-    href: "https://www.turnogo.app/",
-    github: {
-      frontend: "https://github.com/wyn-code/TurnoGo",
-      backend: "https://github.com/wyn-code/TurnoGo_back",
-    },
+      "Link-in-bio para una Apple Premium Store con formulario de plan de canje: valida capacidad y batería y arma el mensaje listo para WhatsApp. HTML, CSS y JavaScript vanilla, deployado en Vercel.",
+    stack: ["HTML", "CSS", "JavaScript", "Vercel"],
+    tag: "Frontend",
+    href: "https://itecnologia.vercel.app/",
   },
 ];
 
@@ -171,24 +160,26 @@ const SOCIALS = [
   { label: "GitHub", href: "https://github.com/lavecchiarocco", icon: Github },
 ];
 
-const BUDGETS = ["$300.000", "$400.000 - $600.000", "$700.000 - $850.000", "Más de $1.000.000"];
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Rocco Lavecchia — Desarrollador Web Full Stack" },
+      { title: "Rocco Lavecchia — Full Stack Junior | Backend Python" },
       {
         name: "description",
         content:
-          "Portfolio de Rocco Lavecchia, desarrollador web full stack. Angular, React, .NET, TypeScript y más. Proyectos, habilidades y contacto.",
+          "Desarrollador Full Stack junior con foco en backend Python. Graduado de la UTN. Casos reales: TurnoGo (FastAPI + PostgreSQL, 122 tests), TotalImport y JFR Tecno. Busco mi primer rol.",
       },
-      { property: "og:title", content: "Rocco Lavecchia — Desarrollador Web Full Stack" },
+      {
+        property: "og:title",
+        content: "Rocco Lavecchia — Full Stack Junior | Backend Python",
+      },
       {
         property: "og:description",
         content:
-          "Portfolio de Rocco Lavecchia, desarrollador web full stack. Proyectos, habilidades y contacto.",
+          "Graduado de la UTN. Backend en Python, FastAPI y PostgreSQL; frontend en React y TypeScript. Tres casos en producción. Busco mi primer rol.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://portfolio-rocco.vercel.app/" },
     ],
   }),
   component: Portfolio,
@@ -199,10 +190,23 @@ function Portfolio() {
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Rocco Lavecchia",
-    jobTitle: "Desarrollador Web Full Stack",
-    url: "https://miportafolioroccodev.vercel.app/",
-    sameAs: ["https://linkedin.com/in/roccolavecchia", "https://github.com/roccolavecchia"],
-    knowsAbout: ["Angular", "React", ".NET", "TypeScript", "Python"],
+    jobTitle: "Full Stack Junior · foco Backend Python",
+    url: "https://portfolio-rocco.vercel.app/",
+    sameAs: [
+      "https://www.linkedin.com/in/rocco-lavecchia-58089917a/",
+      "https://github.com/lavecchiarocco",
+    ],
+    alumniOf: "Tecnicatura Universitaria en Programación — UTN",
+    knowsAbout: [
+      "Python",
+      "FastAPI",
+      "PostgreSQL",
+      "SQLAlchemy",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Sanity",
+    ],
   };
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -279,164 +283,314 @@ function Navbar() {
   );
 }
 
-/* ───────────────────────── Hero (Bento) ───────────────────────── */
+/* ───────────────────────── Hero (Stack Flow) ───────────────────────── */
+const HERO_FLOW = [
+  { n: "01", title: "Python · FastAPI", detail: "API REST y reglas de negocio" },
+  { n: "02", title: "PostgreSQL", detail: "Modelo de datos e integridad GiST" },
+  { n: "03", title: "React · TypeScript", detail: "Interfaz y disponibilidad en vivo" },
+];
+
 function Hero() {
   return (
     <section id="top" className="relative mx-auto max-w-6xl px-5 pt-8 sm:pt-12">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] grid-glow [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)] opacity-60" />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:auto-rows-[minmax(0,1fr)]">
-        {/* Main hero cell */}
-        <div className="bento-cell bento-cell-hover md:col-span-4 md:row-span-2 flex flex-col justify-between p-7 sm:p-10">
-          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
-            Disponible para proyectos freelance
-          </div>
+      <div className="bento-cell relative overflow-hidden p-7 sm:p-10 lg:p-12">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-5">
+          <span className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
+            Busco mi primer rol · Full Stack Junior
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            perfil / 2026 · argentina → latam
+          </span>
+        </div>
 
-          <div className="mt-8">
-            <p className="font-mono text-sm text-primary">{"// "}hola, soy</p>
-            <h1 className="mt-2 font-display text-4xl font-bold leading-[1.05] sm:text-6xl">
-              Rocco Lavecchia
+        <div className="mt-10 grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+          <div>
+            <p className="font-mono text-sm text-primary">{"// hola, soy"}</p>
+            <h1 className="mt-3 font-display text-5xl font-bold leading-[0.95] tracking-tight sm:text-7xl">
+              Rocco <span className="text-gradient">Lavecchia</span>
             </h1>
-            <p className="mt-3 text-balance text-2xl font-medium text-muted-foreground sm:text-3xl">
-              Desarrollador Web <span className="text-gradient font-semibold">Full Stack</span>
+            <p className="mt-5 text-balance text-2xl font-medium text-muted-foreground sm:text-3xl">
+              Full Stack Junior · <span className="text-foreground">foco Backend Python</span>
             </p>
-            <p className="mt-5 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground">
-              Creo experiencias digitales modernas y funcionales con las últimas tecnologías web. De
-              la idea al deploy, backend y frontend.
+            <p className="mt-5 max-w-xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Construyo la API en Python con FastAPI y PostgreSQL y después la pantalla en React y
+              TypeScript. Graduado de la UTN, busco mi primera oportunidad en Argentina o remoto
+              para LatAm.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <a href="#proyectos">
                 <Button className="gap-1.5">
-                  Ver Proyectos <ArrowRight className="h-4 w-4" />
+                  Ver 3 casos <ArrowRight className="h-4 w-4" />
                 </Button>
               </a>
               <a href="#contacto">
                 <Button variant="outline" className="gap-1.5">
-                  Contactar <Mail className="h-4 w-4" />
+                  Escribime <Mail className="h-4 w-4" />
                 </Button>
               </a>
             </div>
+            <p className="mt-6 font-mono text-[11px] text-muted-foreground">
+              3 casos en producción · 122 tests en TurnoGo · Graduado UTN
+            </p>
           </div>
-        </div>
 
-        {/* Aurora visual cell */}
-        <div className="bento-cell relative md:col-span-2 md:row-span-2 min-h-44 overflow-hidden">
-          <img
-            src={heroAurora}
-            alt="Aurora índigo abstracta representando el trabajo de desarrollo de Rocco Lavecchia"
-            width={1200}
-            height={1408}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
-          <div className="absolute bottom-0 p-5">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <p className="mt-2 font-display text-sm font-medium">Diseño + Código</p>
-            <p className="text-xs text-muted-foreground">interfaces con propósito</p>
+          <div className="relative rounded-2xl border border-border bg-background/60 p-5 shadow-[var(--shadow-glow)] sm:p-6">
+            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              <span>stack / flow</span>
+              <span>01 → 03</span>
+            </div>
+
+            <div className="mt-6 space-y-5">
+              {HERO_FLOW.map((step, i) => (
+                <div key={step.n} className="relative flex gap-4">
+                  {i < HERO_FLOW.length - 1 && (
+                    <span
+                      className="absolute left-[13px] top-8 h-[calc(100%+4px)] w-px bg-gradient-to-b from-primary/60 to-transparent"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className="relative z-10 grid h-7 w-7 shrink-0 place-items-center rounded-full border border-primary/40 bg-background font-mono text-[10px] text-primary">
+                    {step.n}
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium">{step.title}</p>
+                    <p className="text-xs text-muted-foreground">{step.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-xl border border-primary/20 bg-primary/5 p-4 font-mono text-xs">
+              <p className="text-primary">POST /api/turnos</p>
+              <p className="mt-1 text-foreground">201 Created</p>
+              <p className="mt-2 text-muted-foreground">// solapes: 0 · constraint GiST</p>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2 font-mono text-[10px] text-muted-foreground">
+              <span className="rounded-md bg-elevated px-2 py-1">122 tests</span>
+              <span className="rounded-md bg-elevated px-2 py-1">OTP</span>
+              <span className="rounded-md bg-elevated px-2 py-1">webhooks firmados</span>
+            </div>
           </div>
-        </div>
-
-        {/* Stat — Educación */}
-        <div className="bento-cell bento-cell-hover md:col-span-2 p-5">
-          <GraduationCap className="h-5 w-5 text-primary" />
-          <p className="mt-3 font-display text-sm font-medium">UTN</p>
-          <p className="text-xs text-muted-foreground">
-            Tecnicatura Universitaria en Programación — estudiante avanzado
-          </p>
-        </div>
-
-        {/* Stat — Proyectos */}
-        <div className="bento-cell bento-cell-hover md:col-span-2 p-5">
-          <Code2 className="h-5 w-5 text-primary" />
-          <p className="mt-3 font-display text-sm font-medium">{PROJECTS.length}+ proyectos</p>
-          <p className="text-xs text-muted-foreground">Angular · React · .NET · Python</p>
-        </div>
-
-        {/* Stat — Stack breadth */}
-        <div className="bento-cell bento-cell-hover md:col-span-2 p-5">
-          <MapPin className="h-5 w-5 text-primary" />
-          <p className="mt-3 font-display text-sm font-medium">Argentina</p>
-          <p className="text-xs text-muted-foreground">Trabajo remoto, en español o inglés</p>
         </div>
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── About + Skills (Bento) ───────────────────────── */
+/* ───────────────────────── About (Decision Profile) ───────────────────────── */
+const ABOUT_PRINCIPLES = [
+  {
+    n: "01",
+    title: "Integridad en la base",
+    body: "En TurnoGo los turnos solapados se previenen con una constraint GiST, no solo con validación en la UI.",
+    tag: "TurnoGo",
+  },
+  {
+    n: "02",
+    title: "Reglas como datos",
+    body: "En TotalImport las alícuotas viven en YAML y se editan desde /api/config, sin redeploy.",
+    tag: "TotalImport",
+  },
+  {
+    n: "03",
+    title: "Contenido fuera del código",
+    body: "En JFR Tecno el catálogo se actualiza desde Sanity, separando el CMS de la interfaz.",
+    tag: "JFR Tecno",
+  },
+];
+
+function StackList({ items }: { items: TechItem[] }) {
+  return (
+    <ul className="mt-4 space-y-1.5">
+      {items.map((item) => (
+        <li
+          key={item.name}
+          className="flex items-center rounded-lg border border-primary/30 bg-background/50 px-3 py-2"
+        >
+          <span className="text-xs font-medium text-foreground">{item.name}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function TechPill({ item, id }: { item: TechItem; id: string }) {
+  const detail = [item.note, item.projects?.join(" · ")].filter(Boolean).join(" — ");
+
+  return (
+    <li className="group relative md:hover:z-10 md:focus-within:z-10">
+      <span
+        tabIndex={0}
+        aria-describedby={detail ? id : undefined}
+        className="inline-flex cursor-default items-center rounded-md border border-border bg-background/60 px-2 py-1 text-xs text-foreground outline-none transition-colors duration-200 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {item.name}
+      </span>
+      {detail ? (
+        <span
+          id={id}
+          className="mt-1 block text-[10px] leading-snug text-muted-foreground transition-opacity duration-200 motion-reduce:transition-none md:pointer-events-none md:absolute md:left-0 md:top-full md:z-20 md:mt-1 md:w-max md:max-w-64 md:rounded-lg md:border md:border-border md:bg-popover md:px-2 md:py-1.5 md:opacity-0 md:shadow-lg md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+        >
+          {detail}
+        </span>
+      ) : null}
+    </li>
+  );
+}
+
+function StackCard({ group, primary = false }: { group: StackGroup; primary?: boolean }) {
+  const groupId = group.label.toLowerCase().replace(/\s+/g, "-");
+
+  return (
+    <div
+      className={`flex h-full flex-col rounded-2xl border p-5 sm:p-6 ${
+        primary ? "border-primary/40 bg-primary/5" : "border-border bg-background/40"
+      }`}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <p
+          className={`font-mono text-[10px] uppercase tracking-widest ${
+            primary ? "text-primary" : "text-muted-foreground"
+          }`}
+        >
+          {primary && <span className="text-primary/70">core / </span>}
+          {group.label}
+        </p>
+        {group.description ? (
+          <span className="text-[10px] text-muted-foreground">{group.description}</span>
+        ) : null}
+      </div>
+      {primary ? (
+        <StackList items={group.items} />
+      ) : (
+        <ul className="mt-4 flex flex-wrap gap-x-1.5 gap-y-3">
+          {group.items.map((item, index) => (
+            <TechPill key={item.name} item={item} id={`stack-${groupId}-${index}`} />
+          ))}
+        </ul>
+      )}
+      {group.footnote ? (
+        <p className="mt-auto pt-3 text-[10px] leading-snug text-muted-foreground">
+          {group.footnote}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function Stack() {
+  const [backend, datos, frontend, herramientas] = CORE_STACK;
+
+  return (
+    <>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="font-display text-lg font-semibold">Stack</h3>
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          cada tecnología tiene al menos un proyecto detrás
+        </span>
+      </div>
+
+      <div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-12 lg:grid-rows-2">
+        <div className="lg:col-span-5 lg:row-span-2">
+          <StackCard group={backend} primary />
+        </div>
+        <div className="lg:col-span-7">
+          <StackCard group={datos} />
+        </div>
+        <div className="lg:col-span-4">
+          <StackCard group={frontend} />
+        </div>
+        <div className="lg:col-span-3">
+          <StackCard group={herramientas} />
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border pt-4">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          también uso
+        </span>
+        <span className="text-xs text-muted-foreground">{ALSO_USED.join(" · ")}</span>
+      </div>
+    </>
+  );
+}
+
 function About() {
   return (
     <section id="sobre-mi" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
       <SectionHeading kicker="01" title="Sobre Mí" />
-      <div id="habilidades" className="mt-8 grid scroll-mt-20 grid-cols-1 gap-4 md:grid-cols-6">
-        {/* Bio */}
-        <div className="bento-cell bento-cell-hover md:col-span-3 p-7">
-          <h3 className="font-display text-xl font-semibold">Rocco Lavecchia</h3>
 
-          <p className="mt-1 text-sm text-primary">
-            Desarrollador Full Stack · Estudiante de Tecnicatura en Programación
+      <div className="mt-8 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="bento-cell p-7 sm:p-9">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
+            perfil / 01
           </p>
-
-          <p className="mt-4 text-pretty text-sm leading-relaxed text-muted-foreground">
-            Soy estudiante avanzado de la Tecnicatura Universitaria en Programación (UTN) y
-            desarrollador Full Stack en formación. Me apasiona crear aplicaciones web completas,
-            trabajando desde la lógica del backend y el modelado de datos hasta interfaces modernas,
-            accesibles y fáciles de usar.
+          <h3 className="mt-4 font-display text-3xl font-semibold tracking-tight">
+            Rocco Lavecchia
+          </h3>
+          <p className="mt-2 text-sm text-primary">Full Stack Junior · foco Backend Python</p>
+          <p className="mt-5 text-pretty text-sm leading-relaxed text-muted-foreground">
+            Graduado de la Tecnicatura Universitaria en Programación (UTN). Trabajo el modelo de
+            datos y la API en Python, FastAPI y PostgreSQL, y la interfaz en React y TypeScript.
           </p>
-
           <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
-            Tengo experiencia desarrollando proyectos reales con React, Angular, TypeScript,
-            FastAPI, .NET, SQL y PostgreSQL. Actualmente busco mi primera oportunidad profesional en
-            el área de desarrollo, donde pueda aportar mis conocimientos, seguir aprendiendo y
-            crecer trabajando en equipo.
+            Busco mi primer rol en un equipo donde pueda aportar desde el primer día y seguir
+            creciendo en backend.
           </p>
-
-          <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
-            Uno de mis principales proyectos es TurnoGo, un SaaS de gestión y reserva de turnos
-            desarrollado y desplegado como una aplicación Full Stack.
-          </p>
-
           <div className="mt-6 flex flex-wrap gap-2">
-            <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-              Full Stack
+            <span className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-primary">
+              Graduado UTN
             </span>
-
-            <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-              Frontend
-            </span>
-
-            <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-              Backend
-            </span>
-
-            <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-              Data
+            <span className="rounded-lg border border-border bg-elevated/40 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+              Argentina · remoto LatAm
             </span>
           </div>
         </div>
 
-        {/* Skills */}
-        <div className="bento-cell md:col-span-3 p-7">
-          <div className="flex items-center justify-between">
-            <h3 className="font-display text-xl font-semibold">Habilidades</h3>
-            <span className="font-mono text-xs text-muted-foreground">{SKILLS.length} techs</span>
+        <div className="bento-cell p-7 sm:p-9">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="font-display text-xl font-semibold">Cómo pienso</h3>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              3 decisiones
+            </span>
           </div>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {SKILLS.map((s) => (
-              <span
-                key={s.name}
-                className="group rounded-xl border border-border bg-elevated/50 px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-primary/50 hover:text-primary"
-                title={s.group}
+
+          <div className="mt-6 space-y-4">
+            {ABOUT_PRINCIPLES.map((item) => (
+              <div
+                key={item.n}
+                className="rounded-xl border border-border bg-background/50 p-4 transition-colors hover:border-primary/40"
               >
-                {s.name}
-                <span className="ml-1 text-muted-foreground/60">·{s.group[0]}</span>
-              </span>
+                <div className="flex items-start gap-3">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-primary/40 bg-background font-mono text-[10px] text-primary">
+                    {item.n}
+                  </span>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-medium">{item.title}</p>
+                      <span className="rounded-md bg-primary/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-primary">
+                        {item.tag}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                      {item.body}
+                    </p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
+      </div>
+
+      <div
+        id="habilidades"
+        className="mt-4 scroll-mt-20 rounded-2xl border border-border bg-elevated/20 p-6 sm:p-7"
+      >
+        <Stack />
       </div>
     </section>
   );
@@ -561,143 +715,42 @@ function Projects() {
 
 /* ───────────────────────── Contact ───────────────────────── */
 function Contact() {
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [budget, setBudget] = useState<string>("");
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    data.append("budget", budget);
-
-    const name = String(data.get("name") ?? "");
-    const email = String(data.get("email") ?? "");
-    data.set("_subject", name ? `Contacto portfolio — ${name}` : "Contacto portfolio");
-    if (email) data.set("_replyto", email);
-
-    if (!FORMSPREE_ENDPOINT || FORMSPREE_ENDPOINT.includes("your-form-id")) {
-      toast.error("Falta configurar VITE_FORMSPREE_ENDPOINT en el archivo .env.");
-      return;
-    }
-
-    setSending(true);
-    try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
-        method: "POST",
-        body: data,
-        headers: { Accept: "application/json" },
-      });
-      if (res.ok) {
-        setSent(true);
-        form.reset();
-        setBudget("");
-        toast.success("¡Mensaje enviado! Te responderé pronto.");
-      } else {
-        toast.error("No se pudo enviar. Intentá de nuevo en un momento.");
-      }
-    } catch {
-      toast.error("Error de red. Revisá tu conexión e intentá de nuevo.");
-    } finally {
-      setSending(false);
-    }
-  }
-
   return (
     <section id="contacto" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
       <SectionHeading kicker="03" title="Contacto" />
-      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-6">
-        {/* Form */}
-        <div className="bento-cell md:col-span-4 p-7">
-          <p className="text-sm text-muted-foreground">
-            Contame sobre tu proyecto y te respondo en menos de 24 hs.
-          </p>
-          {sent ? (
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-elevated/30 py-14 text-center">
-              <CheckCircle2 className="h-10 w-10 text-primary" />
-              <p className="font-display text-lg font-semibold">¡Gracias!</p>
-              <p className="max-w-xs text-sm text-muted-foreground">
-                Tu mensaje fue enviado. Te responderé a la brevedad.
-              </p>
-              <Button variant="outline" size="sm" onClick={() => setSent(false)}>
-                Enviar otro mensaje
-              </Button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="name">Nombre</Label>
-                <Input id="name" name="name" required placeholder="Tu nombre" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" required placeholder="vos@email.com" />
-              </div>
-              <div className="space-y-1.5 sm:col-span-2">
-                <Label>Presupuesto estimado</Label>
-                <Select value={budget} onValueChange={setBudget}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BUDGETS.map((b) => (
-                      <SelectItem key={b} value={b}>
-                        {b}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  Si no tenés un presupuesto definido, elegí la opción más cercana.
-                </p>
-              </div>
-              <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="message">Mensaje</Label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows={4}
-                  placeholder="Contame sobre tu proyecto..."
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <Button type="submit" disabled={sending} className="gap-1.5">
-                  {sending ? "Enviando..." : "Enviar mensaje"}
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </form>
-          )}
+      <div className="bento-cell mt-8 p-7 sm:p-9">
+        <h3 className="font-display text-2xl font-semibold leading-snug sm:text-3xl">
+          ¿Necesitás backend y frontend en la misma persona?
+        </h3>
+        <p className="mt-3 max-w-xl text-pretty text-sm leading-relaxed text-muted-foreground">
+          Soy graduado de la UTN y busco mi primer rol como Full Stack Junior, con foco en backend
+          Python. Argentina — presencial, híbrido o remoto para LatAm.
+        </p>
+        <div className="mt-7 flex flex-wrap gap-3">
+          <a
+            href="mailto:roccolavecchia.rl@gmail.com?subject=Postulaci%C3%B3n%20Full%20Stack%20%E2%80%94%20Rocco%20Lavecchia"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Escribime <Mail className="h-4 w-4" />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/rocco-lavecchia-58089917a/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-elevated/30 px-4 py-2.5 text-sm font-medium transition-colors hover:border-primary/50 hover:text-primary"
+          >
+            LinkedIn <ArrowUpRight className="h-3.5 w-3.5" />
+          </a>
+          <a
+            href="https://github.com/lavecchiarocco"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-elevated/30 px-4 py-2.5 text-sm font-medium transition-colors hover:border-primary/50 hover:text-primary"
+          >
+            GitHub <ArrowUpRight className="h-3.5 w-3.5" />
+          </a>
         </div>
-
-        {/* Socials */}
-        <div className="bento-cell md:col-span-2 flex flex-col p-7">
-          <h3 className="font-display text-xl font-semibold">Conectemos</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            También podés escribirme directo por cualquiera de estos canales.
-          </p>
-          <div className="mt-6 flex flex-col gap-3">
-            {SOCIALS.map((s) => {
-              const Icon = s.icon;
-              return (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center gap-3 rounded-xl border border-border bg-elevated/30 px-4 py-3 transition-colors hover:border-primary/50"
-                >
-                  <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary/15 text-primary">
-                    <Icon className="h-4.5 w-4.5" />
-                  </span>
-                  <span className="text-sm font-medium">{s.label}</span>
-                  <ArrowUpRight className="ml-auto h-4 w-4 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" />
-                </a>
-              );
-            })}
-          </div>
-        </div>
+        <p className="mt-6 font-mono text-xs text-muted-foreground">roccolavecchia.rl@gmail.com</p>
       </div>
     </section>
   );

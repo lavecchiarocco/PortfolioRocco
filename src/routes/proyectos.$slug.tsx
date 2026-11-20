@@ -4,11 +4,13 @@ import { PROJECT_DETAILS, type ProjectSection } from "@/lib/project-details";
 import turnoGo from "@/assets/turnoGo.png";
 import totalImport1 from "@/assets/totalimport1.png";
 import totalImport2 from "@/assets/totalimport2.png";
+import jfrTecno from "@/assets/jfr.jpeg";
 
 const PROJECT_IMAGES: Record<string, string> = {
   turnogo: turnoGo,
   totalimport1: totalImport1,
   totalimport2: totalImport2,
+  jfr: jfrTecno,
 };
 
 export const Route = createFileRoute("/proyectos/$slug")({
