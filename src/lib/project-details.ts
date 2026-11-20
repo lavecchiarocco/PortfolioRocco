@@ -8,6 +8,7 @@ export interface ProjectDetail {
   tag: string;
   summary: string;
   image?: string;
+  gallery?: string[];
   stack: string[];
   links: { label: string; href: string }[];
   sections: ProjectSection[];
@@ -202,6 +203,7 @@ export const PROJECT_DETAILS: Record<string, ProjectDetail> = {
     summary:
       "Catálogo de monitores portátiles con Sanity como CMS headless: productos y precios se actualizan sin tocar código. Incluye fichas de producto, checkout por WhatsApp, envíos a todo el país y deploy en Vercel.",
     image: "jfr",
+    gallery: ["jfr-1", "jfr-2", "jfr-3", "jfr-4"],
     stack: ["Sanity", "Vercel", "WhatsApp"],
     links: [{ label: "Sitio web", href: "https://catalogo-jfrtecno.vercel.app/" }],
     sections: [

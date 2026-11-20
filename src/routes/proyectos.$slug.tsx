@@ -5,12 +5,20 @@ import turnoGo from "@/assets/turnoGo.png";
 import totalImport1 from "@/assets/totalimport1.png";
 import totalImport2 from "@/assets/totalimport2.png";
 import jfrTecno from "@/assets/jfr.jpeg";
+import jfr1 from "@/assets/jfr-1.jpg";
+import jfr2 from "@/assets/jfr-2.jpg";
+import jfr3 from "@/assets/jfr-3.jpg";
+import jfr4 from "@/assets/jfr-4.jpg";
 
 const PROJECT_IMAGES: Record<string, string> = {
   turnogo: turnoGo,
   totalimport1: totalImport1,
   totalimport2: totalImport2,
   jfr: jfrTecno,
+  "jfr-1": jfr1,
+  "jfr-2": jfr2,
+  "jfr-3": jfr3,
+  "jfr-4": jfr4,
 };
 
 export const Route = createFileRoute("/proyectos/$slug")({
@@ -106,6 +114,24 @@ function ProjectDetailPage() {
               className="h-auto w-full object-cover object-top"
             />
           </div>
+        )}
+
+        {project.gallery && project.gallery.length > 0 && (
+          <section className="mt-4">
+            <h2 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              Galería
+            </h2>
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {project.gallery.map((key, index) => (
+                <img
+                  key={key}
+                  src={PROJECT_IMAGES[key]}
+                  alt={`Vista ${index + 1} de ${project.name}`}
+                  className="aspect-[4/5] w-full rounded-xl border border-border bg-elevated/30 object-cover"
+                />
+              ))}
+            </div>
+          </section>
         )}
 
         <div className="mt-10 flex flex-col gap-6">

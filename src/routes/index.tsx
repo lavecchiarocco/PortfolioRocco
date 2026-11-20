@@ -5,12 +5,18 @@ import { Button } from "@/components/ui/button";
 import turnoGo from "@/assets/turnoGo.png";
 import totalImport1 from "@/assets/totalimport1.png";
 import jfrTecno from "@/assets/jfr.jpeg";
+import jfr1 from "@/assets/jfr-1.jpg";
+import jfr2 from "@/assets/jfr-2.jpg";
+import jfr3 from "@/assets/jfr-3.jpg";
+import jfr4 from "@/assets/jfr-4.jpg";
 
 const FEATURED_IMAGES: Record<string, string> = {
   turnogo: turnoGo,
   totalimport: totalImport1,
   jfr: jfrTecno,
 };
+
+const JFR_IMAGES = [jfr1, jfr2, jfr3, jfr4];
 
 const NAV = [
   { label: "Sobre Mí", href: "#sobre-mi" },
@@ -659,11 +665,24 @@ function Projects() {
                   </div>
                 </div>
                 <div className="relative overflow-hidden rounded-xl border border-border bg-elevated/30 lg:w-[42%] lg:shrink-0">
-                  <img
-                    src={FEATURED_IMAGES[p.slug!] ?? turnoGo}
-                    alt={`Captura de la aplicación ${p.name}`}
-                    className="h-52 w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] sm:h-60 lg:h-64"
-                  />
+                  {p.slug === "jfr" ? (
+                    <div className="grid h-52 grid-cols-2 gap-1.5 p-1.5 sm:h-60 lg:h-64">
+                      {JFR_IMAGES.map((src, index) => (
+                        <img
+                          key={src}
+                          src={src}
+                          alt={`Vista ${index + 1} del catálogo de JFR Tecno`}
+                          className="h-full w-full rounded-lg object-cover transition-transform duration-300 motion-reduce:transition-none group-hover:scale-[1.02]"
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <img
+                      src={FEATURED_IMAGES[p.slug!] ?? turnoGo}
+                      alt={`Captura de la aplicación ${p.name}`}
+                      className="h-52 w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] sm:h-60 lg:h-64"
+                    />
+                  )}
                 </div>
               </article>
             ))}
